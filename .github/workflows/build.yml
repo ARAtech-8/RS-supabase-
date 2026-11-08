@@ -11,9 +11,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Show what is in the repo
-        run: find . -not -path './.git/*' -maxdepth 3 | head -50
-
       - name: Find the project
         run: |
           ZIP="$(find . -iname '*.zip' -not -path './.git/*' | head -1)"
@@ -25,14 +22,13 @@ jobs:
           SETTINGS="$(find . -name settings.gradle.kts -not -path './.git/*' | head -1)"
           if [ -z "$SETTINGS" ]; then echo "No project found"; exit 1; fi
           echo "PROJECT_DIR=$(dirname "$SETTINGS")" >> "$GITHUB_ENV"
-          echo "Project folder: $(dirname "$SETTINGS")"
 
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
-      -       - name: Install Android platform
+      - name: Install Android platform
         run: |
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-35" "build-tools;35.0.0"
